@@ -1,6 +1,8 @@
 extends Node
 
-var card_sort_id = 1
+var card_sort_id = 0
+var card_sort_suit = 0
+var card_sort_value = 1
 
 var column = 0
 var line_y = 0
@@ -10,14 +12,16 @@ func _ready():
 	pass
 
 func draw_cards():
-	while card_sort_id < 11:
+	while card_sort_id < 52:
 		var card = load("res://Scenes/Card.tscn")
 		var node = card.instance()
-		node.suit = "spades"
-		node.value = card_sort_id
+		node.set_name("Card" + String(card_sort_id))
+		node.suit = get_suit()
+		node.value = card_sort_value
 		$Cards.add_child(node, true)
 		card_sort_id += 1
-		pass
+		update_values()
+		
 		
 	var cards_array = $Cards.get_children()
 	print(cards_array)
@@ -26,6 +30,26 @@ func draw_cards():
 		card_id.position = give_position()
 		print(card_id.suit)
 		print(card_id.value)
+
+func update_values():
+	if card_sort_value == 13:
+		card_sort_value = 1
+		card_sort_suit += 1
+	else: card_sort_value += 1
+
+func get_suit():
+	if card_sort_suit == 0:
+		return "hearts"
+	elif card_sort_suit == 1:
+		return "spades"
+	elif card_sort_suit == 2:
+		return "diamonds"
+	elif card_sort_suit == 3:
+		return "flowers"
+	else:
+		print ("card_sort_suit has a wrong index assigned")
+		return null
+	pass
 
 func give_position():
 	if column == 0:
@@ -52,5 +76,5 @@ func give_position():
 	elif column == 7:
 		column = 0
 		var old_y = line_y
-		line_y += 100
+		line_y += 50
 		return $Positions/P8.position + Vector2 (0, old_y)

@@ -5,7 +5,9 @@ var card_sort_suit = 0
 var card_sort_value = 1
 
 var column = 0
-var line_y = 0
+var row = 0
+
+var astar = AStar.new()
 
 export var deal_number = int()
 
@@ -21,6 +23,7 @@ func generate_cards():
 		node.suit = get_suit()
 		node.value = card_sort_value
 		$Cards.add_child(node, true)
+		#astar.add_point(card_sort_id, Vector3(0,0,0))
 		card_sort_id += 1
 		update_values()
 	
@@ -38,7 +41,6 @@ func generate_cards():
 		n -= 1
 	
 	draw_cards(deal_number, cards_dic)
-	
 
 func update_values():
 	if card_sort_suit == 3:
@@ -60,33 +62,50 @@ func get_suit():
 		return null
 	pass
 
-func get_position():
+func get_column():
 	if column == 0:
 		column += 1
-		return $Positions/P1.position + Vector2 (0, line_y)
+		return $Positions/P1.position.x
 	elif column == 1:
 		column += 1
-		return $Positions/P2.position + Vector2 (0, line_y)
+		return $Positions/P2.position.x
 	elif column == 2:
 		column += 1
-		return $Positions/P3.position + Vector2 (0, line_y)
+		return $Positions/P3.position.x
 	elif column == 3:
 		column += 1
-		return $Positions/P4.position + Vector2 (0, line_y)
+		return $Positions/P4.position.x
 	elif column == 4:
 		column += 1
-		return $Positions/P5.position + Vector2 (0, line_y)
+		return $Positions/P5.position.x
 	elif column == 5:
 		column += 1
-		return $Positions/P6.position + Vector2 (0, line_y)
+		return $Positions/P6.position.x
 	elif column == 6:
 		column += 1
-		return $Positions/P7.position + Vector2 (0, line_y)
+		return $Positions/P7.position.x
 	elif column == 7:
 		column = 0
-		var old_y = line_y
-		line_y += 50
-		return $Positions/P8.position + Vector2 (0, old_y)
+		row += 1
+		return $Positions/P8.position.x
+	else: print("game generation's asking for more columns than possible")
+
+func get_row():
+	if row == 0:
+		return $Positions/R1.position.y
+	elif row == 1:
+		return $Positions/R2.position.y
+	elif row == 2:
+		return $Positions/R3.position.y
+	elif row == 3:
+		return $Positions/R4.position.y
+	elif row == 4:
+		return $Positions/R5.position.y
+	elif row == 5:
+		return $Positions/R6.position.y
+	elif row == 6:
+		return $Positions/R7.position.y
+	else: print("game generation's asking for more rows than possible")
 
 func rng(_seed):
 	var state = (214013 * _seed + 2531011) % 2147483648
@@ -106,7 +125,11 @@ func draw_cards(deal_number, cards_dic):
 	pass
 
 func deal_card(card):
-	card.position = get_position()
+	card.row = row
+	card.column = column
+	card.position.y = get_row()
+	card.position.x = get_column()
+	card.adjust_z_index()
 	pass
 
 

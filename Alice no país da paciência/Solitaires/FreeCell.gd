@@ -7,11 +7,13 @@ var card_sort_value = 1
 var column = 0
 var line_y = 0
 
+export var deal_number = int()
+
 func _ready():
-	draw_cards()
+	generate_cards()
 	pass
 
-func draw_cards():
+func generate_cards():
 	while card_sort_id < 52:
 		var card = load("res://Scenes/Card.tscn")
 		var node = card.instance()
@@ -21,37 +23,44 @@ func draw_cards():
 		$Cards.add_child(node, true)
 		card_sort_id += 1
 		update_values()
-		
-		
-	var cards_array = $Cards.get_children()
-	print(cards_array)
 	
-	for card_id in cards_array:
-		card_id.position = give_position()
-		print(card_id.suit)
-		print(card_id.value)
+	var cards_array = $Cards.get_children()
+	var cards_dic = {}
+	var idx = 0
+	
+	var new_array = cards_array
+	var n = cards_array.size()
+	
+	while n != 0:
+		cards_dic[idx] = new_array.front()
+		new_array.pop_front()
+		idx += 1
+		n -= 1
+	
+	draw_cards(deal_number, cards_dic)
+	
 
 func update_values():
-	if card_sort_value == 13:
-		card_sort_value = 1
-		card_sort_suit += 1
-	else: card_sort_value += 1
+	if card_sort_suit == 3:
+		card_sort_suit = 0
+		card_sort_value += 1
+	else: card_sort_suit += 1
 
 func get_suit():
 	if card_sort_suit == 0:
-		return "hearts"
-	elif card_sort_suit == 1:
-		return "spades"
-	elif card_sort_suit == 2:
-		return "diamonds"
-	elif card_sort_suit == 3:
 		return "flowers"
+	elif card_sort_suit == 1:
+		return "diamonds"
+	elif card_sort_suit == 2:
+		return "hearts"
+	elif card_sort_suit == 3:
+		return "spades"
 	else:
 		print ("card_sort_suit has a wrong index assigned")
 		return null
 	pass
 
-func give_position():
+func get_position():
 	if column == 0:
 		column += 1
 		return $Positions/P1.position + Vector2 (0, line_y)
@@ -78,3 +87,27 @@ func give_position():
 		var old_y = line_y
 		line_y += 50
 		return $Positions/P8.position + Vector2 (0, old_y)
+
+func rng(_seed):
+	var state = (214013 * _seed + 2531011) % 2147483648
+	return state / 65536
+	pass
+
+func draw_cards(deal_number, cards_dic):
+	var _seed = deal_number
+	var new_dic = cards_dic
+	while new_dic.size() != 0:
+		var index = rng(_seed) % cards_dic.size()
+		var current_card = new_dic[index]
+		new_dic[index] = new_dic[new_dic.size() - 1]
+		new_dic.erase(new_dic.size() - 1)
+		deal_card(current_card)
+		_seed = rng(_seed)
+	pass
+
+func deal_card(card):
+	card.position = get_position()
+	pass
+
+
+

@@ -4,6 +4,7 @@
 
 [node name="FreeCell" type="Node"]
 script = ExtResource( 1 )
+deal_number = 80
 
 [node name="Cards" type="Node" parent="."]
 

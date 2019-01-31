@@ -23,7 +23,6 @@ func generate_cards():
 		node.suit = get_suit()
 		node.value = card_sort_value
 		$Cards.add_child(node, true)
-		#astar.add_point(card_sort_id, Vector3(0,0,0))
 		card_sort_id += 1
 		update_values()
 	
@@ -41,6 +40,7 @@ func generate_cards():
 		n -= 1
 	
 	draw_cards(deal_number, cards_dic)
+	generate_connections(cards_dic)
 
 func update_values():
 	if card_sort_suit == 3:
@@ -132,5 +132,10 @@ func deal_card(card):
 	card.adjust_z_index()
 	pass
 
-
+func generate_connections(cards_dic):
+	var all_idxs = cards_dic.keys()
+	
+	for idx in all_idxs:
+		astar.add_point(idx, Vector3(0,0,0))
+	
 

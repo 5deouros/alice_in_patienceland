@@ -39,8 +39,9 @@ func generate_cards():
 		idx += 1
 		n -= 1
 	
-	draw_cards(deal_number, cards_dic)
 	generate_connections(cards_dic)
+	draw_cards(deal_number, cards_dic)
+	
 
 func update_values():
 	if card_sort_suit == 3:
@@ -126,16 +127,21 @@ func draw_cards(deal_number, cards_dic):
 
 func deal_card(card):
 	card.row = row
-	card.column = column
 	card.position.y = get_row()
 	card.position.x = get_column()
 	card.adjust_z_index()
 	pass
 
 func generate_connections(cards_dic):
-	var all_idxs = cards_dic.keys()
+	var all_cards = cards_dic.keys()
+	var idx = 0
 	
-	for idx in all_idxs:
+	for card in all_cards:
 		astar.add_point(idx, Vector3(0,0,0))
+		if $Cards.get_children().has(all_cards[idx]):
+			pass
+		idx += 1
 	
+	print(astar.get_points())
+	print("done")
 
